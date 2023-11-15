@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `building` (
   KEY `number` (`number`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
--- Dumping data for table demo_project.building: ~26 rows (approximately)
+-- Dumping data for table demo_project.building: ~27 rows (approximately)
 REPLACE INTO `building` (`ip`, `building`, `floor`, `number`) VALUES
 	('01BGEL14A', 'O1B', 'G', 'EL1,4(A1)'),
 	('01BGEL15A', 'O1B', 'G', 'EL1,5(A2)'),
@@ -70,9 +70,9 @@ CREATE TABLE IF NOT EXISTS `encoder_input` (
   PRIMARY KEY (`no`),
   KEY `FK_encoder_input_building` (`ip`),
   CONSTRAINT `FK_encoder_input_building` FOREIGN KEY (`ip`) REFERENCES `building` (`ip`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
--- Dumping data for table demo_project.encoder_input: ~8 rows (approximately)
+-- Dumping data for table demo_project.encoder_input: ~16 rows (approximately)
 REPLACE INTO `encoder_input` (`no`, `status`, `dir`, `event`, `ip`) VALUES
 	(1, 'NORM', 'UP', 0, '01BGEL14A'),
 	(2, 'NORM', 'DOWN', 0, '01BGEL14A'),
@@ -82,7 +82,14 @@ REPLACE INTO `encoder_input` (`no`, `status`, `dir`, `event`, `ip`) VALUES
 	(6, 'NORM', 'DOWN', 0, 'O41EL222C'),
 	(7, 'NORM', 'DOWN', 0, 'H469EL12A'),
 	(8, 'NORM', 'DOWN', 0, 'O2GEL13A'),
-	(9, 'NORM', 'UP', 0, 'O2GEL13A');
+	(9, 'NORM', 'UP', 0, 'O2GEL13A'),
+	(10, 'COMM', 'err', 0, 'H32ES3B'),
+	(11, 'STOP', 'err', 0, 'H3GES1A'),
+	(12, 'ERR', 'err', 0, 'O1B1EL31C'),
+	(13, 'COMM', 'err', 0, 'O1B1EL31C'),
+	(14, 'ERR', 'null', 0, 'O2GEL13A'),
+	(21, 'ERR', 'err', 1, 'O31ES2A'),
+	(22, 'NORM', 'UP', 0, 'O31ES2A');
 
 -- Dumping structure for table demo_project.history
 CREATE TABLE IF NOT EXISTS `history` (
@@ -98,9 +105,11 @@ CREATE TABLE IF NOT EXISTS `history` (
   KEY `FK_history_building_2` (`number`),
   CONSTRAINT `FK_history_building` FOREIGN KEY (`building`) REFERENCES `building` (`building`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_history_building_2` FOREIGN KEY (`number`) REFERENCES `building` (`number`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
--- Dumping data for table demo_project.history: ~0 rows (approximately)
+-- Dumping data for table demo_project.history: ~1 rows (approximately)
+REPLACE INTO `history` (`id`, `date`, `time`, `building`, `group`, `number`, `information`) VALUES
+	(5, '2023-11-15', '24:14:04', 'O3', 'A', 'ES2(A2)', 'Communication by O31ES2A');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

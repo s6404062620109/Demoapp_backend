@@ -55,6 +55,38 @@ app.post('/inputdetected', (req, res) => {
     const event  = req.body.event;
     const ip = req.body.ip;
 
+    const currentdate = new Date().toISOString().slice(0, 10); 
+    const currenttime = new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }); 
+
+    const lastChar = ip.charAt(ip.length - 1);
+    const getbuildingvalue = {
+        building: '',
+        number: '',
+        group: lastChar
+    }
+    if(event==='1'){
+        db.query(`SELECT * FROM building WHERE ip=? `, [ip], (err, result) =>{
+            if(err){
+                console.log(err);
+                res.status(500).json({ message: "Cann't connect building table" });
+            }
+            else{
+                getbuildingvalue.building = result[0].building;
+                getbuildingvalue.number = result[0].number;
+                db.query(`INSERT INTO history (date, time, building, \`group\`, number, information) VALUE (?, ?, ?, ?, ?, ?)`, 
+                    [currentdate, currenttime, getbuildingvalue.building, getbuildingvalue.group, getbuildingvalue.number, 'Communication by '+ip], 
+                    (err,result) => {
+                        if(err){
+                            console.log(err);
+                            return res.status(500).json({message: "History post in databased failed!"});
+                        }
+                        else{
+                            console.log( "History post Success!" );
+                        }
+                });
+            }
+        });
+    }
     db.query(`INSERT INTO encoder_input (status, dir, event, ip) 
     VALUE (?, ?, ?, ?)`,[status, dir, event, ip], (err,result) => {
         if(err){
@@ -63,9 +95,9 @@ app.post('/inputdetected', (req, res) => {
         }
         else{
             return res.status(200).json({message: "Encoder_input post Success!"});
-            //console.log(res)
         }
     });
+
 });
 
 app.get('/getbuilding', (req, res) =>{
@@ -89,7 +121,7 @@ app.get('/getencoderInput', (req, res) => {
     (err, result) => {
         if(err){
             console.log(err);
-            res.status(500).json({ message: "Cann't connect encoder_input table" });
+            res.status(500).json({ message: "Cann't connect encoder_input/building table" });
         }
         else{
             // console.log("Get result success!");
@@ -97,6 +129,23 @@ app.get('/getencoderInput', (req, res) => {
         }
     });
 });
+
+app.post('/getbuildingsensor', (req, res) => {
+    const building = req.body.building;
+    db.query(`SELECT building.building, building.number, 
+    encoder_input.no, encoder_input.status, encoder_input.dir FROM building 
+    JOIN encoder_input ON building.ip = encoder_input.ip 
+    WHERE building.building=? ORDER BY building.number `, [building], (err, result) => {
+        if(err){
+            console.log(err);
+            res.status(500).json({ message: "Cann't connect e   ncoder_input/building table" });
+        }
+        else{
+            // console.log("Get result success!");
+            res.status(200).json({ result });
+        }
+    })
+})
 
 app.listen('3001', () =>{
     console.log('Server is running on port 3001');
