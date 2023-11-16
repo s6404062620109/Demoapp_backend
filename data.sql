@@ -70,9 +70,9 @@ CREATE TABLE IF NOT EXISTS `encoder_input` (
   PRIMARY KEY (`no`),
   KEY `FK_encoder_input_building` (`ip`),
   CONSTRAINT `FK_encoder_input_building` FOREIGN KEY (`ip`) REFERENCES `building` (`ip`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
--- Dumping data for table demo_project.encoder_input: ~16 rows (approximately)
+-- Dumping data for table demo_project.encoder_input: ~19 rows (approximately)
 REPLACE INTO `encoder_input` (`no`, `status`, `dir`, `event`, `ip`) VALUES
 	(1, 'NORM', 'UP', 0, '01BGEL14A'),
 	(2, 'NORM', 'DOWN', 0, '01BGEL14A'),
@@ -89,7 +89,10 @@ REPLACE INTO `encoder_input` (`no`, `status`, `dir`, `event`, `ip`) VALUES
 	(13, 'COMM', 'err', 0, 'O1B1EL31C'),
 	(14, 'ERR', 'null', 0, 'O2GEL13A'),
 	(21, 'ERR', 'err', 1, 'O31ES2A'),
-	(22, 'NORM', 'UP', 0, 'O31ES2A');
+	(22, 'NORM', 'UP', 0, 'O31ES2A'),
+	(23, 'COMM', 'err', 1, 'O4GEL112A'),
+	(24, 'NORM', 'UP', 0, '01BGEL15A'),
+	(25, 'ERR', 'err', 1, '01BGEL15A');
 
 -- Dumping structure for table demo_project.history
 CREATE TABLE IF NOT EXISTS `history` (
@@ -105,11 +108,13 @@ CREATE TABLE IF NOT EXISTS `history` (
   KEY `FK_history_building_2` (`number`),
   CONSTRAINT `FK_history_building` FOREIGN KEY (`building`) REFERENCES `building` (`building`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_history_building_2` FOREIGN KEY (`number`) REFERENCES `building` (`number`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
--- Dumping data for table demo_project.history: ~1 rows (approximately)
+-- Dumping data for table demo_project.history: ~3 rows (approximately)
 REPLACE INTO `history` (`id`, `date`, `time`, `building`, `group`, `number`, `information`) VALUES
-	(5, '2023-11-15', '24:14:04', 'O3', 'A', 'ES2(A2)', 'Communication by O31ES2A');
+	(5, '2023-11-15', '00:14:04', 'O3', 'A', 'ES2(A2)', 'Communication by O31ES2A'),
+	(6, '2023-11-16', '12:16:33', 'O4', 'A', 'EL1.1-2(A2)', 'Communication by O4GEL112A'),
+	(7, '2023-11-16', '18:49:14', 'O1B', 'A', 'EL1,5(A2)', 'Communication by 01BGEL15A');
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
