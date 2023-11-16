@@ -1,6 +1,7 @@
 const express = require('express');
 const mysql = require('mysql');
 const cors = require('cors');
+const moment = require('moment-timezone');
 const app = express();
 
 app.use(cors());
@@ -55,7 +56,7 @@ app.post('/inputdetected', (req, res) => {
     const event  = req.body.event;
     const ip = req.body.ip;
 
-    const currentdate = new Date().toISOString().slice(0, 10); 
+    const currentdate = moment().tz('Your-Timezone').format('YYYY-MM-DD');
     const currenttime = new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }); 
 
     const lastChar = ip.charAt(ip.length - 1);
