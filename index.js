@@ -19,31 +19,92 @@ const db = mysql.createConnection({
     database: "demo_project"
 })
 
-app.get('/gethistory', (req, res) =>{
-    db.query("SELECT * FROM history", (err, result) =>{
-        if(err){
-            console.log(err);
-            res.status(500).json({ message: "Cann't connect history table" });
-        }
-        else{
-            // console.log("Get result success!");
-            res.status(200).json({ result });
-        }
-    });
-});
-
-app.get('/gethistoryh3', (req, res) =>{
-    db.query("SELECT * FROM history WHERE building = 'H3' ", (err, result) =>{
-        if(err){
-            console.log(err);
-            res.status(500).json({ message: "Cann't connect history table" });
-        }
-        else{
-            // console.log("Get result success!");
-            res.status(200).json({ result });
-            // console.log(result);
-        }
-    });
+app.post('/gethistory', (req, res) =>{
+    const userrole = req.body.userrole;
+    if(userrole === "hotel_3"){
+        db.query(`SELECT * FROM history WHERE building = 'H3' `, (err, result) => {
+            if(err){
+                console.log(err);
+                res.status(500).json({ message: "Cann't connect history table" });
+            }
+            else{
+                // console.log("Get result success!");
+                res.status(200).json({ result });
+            }
+        });
+    }
+    else if(userrole === "hotel_4"){
+        db.query(`SELECT * FROM history WHERE building = 'H4' `, (err, result) => {
+            if(err){
+                console.log(err);
+                res.status(500).json({ message: "Cann't connect history table" });
+            }
+            else{
+                // console.log("Get result success!");
+                res.status(200).json({ result });
+            }
+        });
+    }
+    else if(userrole === "office_1b"){
+        db.query(`SELECT * FROM history WHERE building = 'O1B' `, (err, result) => {
+            if(err){
+                console.log(err);
+                res.status(500).json({ message: "Cann't connect history table" });
+            }
+            else{
+                // console.log("Get result success!");
+                res.status(200).json({ result });
+            }
+        });
+    }
+    else if(userrole === "office_2"){
+        db.query(`SELECT * FROM history WHERE building = 'O2' `, (err, result) => {
+            if(err){
+                console.log(err);
+                res.status(500).json({ message: "Cann't connect history table" });
+            }
+            else{
+                // console.log("Get result success!");
+                res.status(200).json({ result });
+            }
+        });
+    }
+    else if(userrole === "office_3"){
+        db.query(`SELECT * FROM history WHERE building = 'O3' `, (err, result) => {
+            if(err){
+                console.log(err);
+                res.status(500).json({ message: "Cann't connect history table" });
+            }
+            else{
+                // console.log("Get result success!");
+                res.status(200).json({ result });
+            }
+        });
+    }
+    else if(userrole === "office_4"){
+        db.query(`SELECT * FROM history WHERE building = 'O4' `, (err, result) => {
+            if(err){
+                console.log(err);
+                res.status(500).json({ message: "Cann't connect history table" });
+            }
+            else{
+                // console.log("Get result success!");
+                res.status(200).json({ result });
+            }
+        });
+    }
+    else{
+        db.query("SELECT * FROM history", (err, result) =>{
+            if(err){
+                console.log(err);
+                res.status(500).json({ message: "Cann't connect history table" });
+            }
+            else{
+                // console.log("Get result success!");
+                res.status(200).json({ result });
+            }
+        });
+    }
 });
 
 app.post('/posthistory', (req, res) => {
