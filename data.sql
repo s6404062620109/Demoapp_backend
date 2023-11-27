@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `building` (
   KEY `number` (`number`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
--- Dumping data for table demo_project.building: ~27 rows (approximately)
+-- Dumping data for table demo_project.building: ~26 rows (approximately)
 REPLACE INTO `building` (`ip`, `building`, `floor`, `number`) VALUES
 	('01BGEL14A', 'O1B', 'G', 'EL1,4(A1)'),
 	('01BGEL15A', 'O1B', 'G', 'EL1,5(A2)'),
@@ -71,9 +71,9 @@ CREATE TABLE IF NOT EXISTS `encoder_input` (
   PRIMARY KEY (`no`),
   KEY `FK_encoder_input_building` (`ip`),
   CONSTRAINT `FK_encoder_input_building` FOREIGN KEY (`ip`) REFERENCES `building` (`ip`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=87 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=144 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
--- Dumping data for table demo_project.encoder_input: ~53 rows (approximately)
+-- Dumping data for table demo_project.encoder_input: ~110 rows (approximately)
 REPLACE INTO `encoder_input` (`no`, `status`, `dir`, `event`, `ip`, `datetime`) VALUES
 	(33, 'NORM', 'up', 0, 'H32ES3B', '2023-11-23 17:48:37'),
 	(34, 'NORM', 'up', 0, 'H32ES4B', '2023-11-23 17:48:56'),
@@ -127,7 +127,64 @@ REPLACE INTO `encoder_input` (`no`, `status`, `dir`, `event`, `ip`, `datetime`) 
 	(83, 'COMM', 'err', 0, 'H3GES2A', '2023-11-24 14:56:05'),
 	(84, 'STOP', 'down', 1, 'H3GES2A', '2023-11-24 15:03:31'),
 	(85, 'COMM', 'err', 0, 'H3GES2A', '2023-11-24 15:03:48'),
-	(86, 'COMM', 'err', 0, 'O1BMEL21B', '2023-11-24 18:43:24');
+	(86, 'NORM', 'up', 0, 'O1BMEL21B', '2023-11-25 18:43:24'),
+	(87, 'STOP', 'err', 0, 'O1BMEL21B', '2023-11-25 20:46:22'),
+	(88, 'NORM', 'up', 0, 'O1BMEL21B', '2023-11-25 20:47:12'),
+	(89, 'COMM', 'err', 0, 'H469EL12A', '2023-11-25 20:56:23'),
+	(90, 'STOP', 'down', 0, 'O1BMEL21B', '2023-11-26 13:05:51'),
+	(91, 'COMM', 'down', 0, 'O1BMEL21B', '2023-11-26 14:02:43'),
+	(92, 'STOP', 'up', 0, 'O2GEL11A', '2023-11-26 14:04:26'),
+	(93, 'COMM', 'up', 0, 'O2GEL11A', '2023-11-26 14:04:34'),
+	(94, 'NORM', 'up', 0, 'O2GEL11A', '2023-11-26 14:08:46'),
+	(95, 'COMM', 'up', 0, 'O2GEL11A', '2023-11-26 14:08:54'),
+	(96, 'NORM', 'down', 1, 'O2GEL11A', '2023-11-26 21:30:06'),
+	(97, 'NORM', 'down', 1, 'O2GEL11A', '2023-11-26 21:30:58'),
+	(98, 'COMM', 'down', 0, 'O2GEL11A', '2023-11-26 21:36:12'),
+	(99, 'NORM', 'up', 0, 'O2GEL11A', '2023-11-26 21:38:47'),
+	(100, 'COMM', 'up', 0, 'O2GEL11A', '2023-11-26 21:38:55'),
+	(101, 'NORM', 'up', 0, 'O4GEL112A', '2023-11-26 22:34:23'),
+	(102, 'NORM', 'up', 0, 'O4GEL112A', '2023-11-26 22:36:03'),
+	(103, 'NORM', 'up', 0, 'O4GEL112A', '2023-11-26 22:36:20'),
+	(104, 'NORM', 'down', 0, 'O4GEL112A', '2023-11-26 22:39:10'),
+	(105, 'NORM', 'down', 0, 'O4GEL112A', '2023-11-26 22:42:27'),
+	(106, 'NORM', 'down', 0, 'O4GEL112A', '2023-11-26 22:43:12'),
+	(107, 'NORM', 'up', 0, 'O4GEL112A', '2023-11-27 07:36:59'),
+	(108, 'NORM', 'up', 0, 'O4GEL112A', '2023-11-27 07:37:53'),
+	(109, 'NORM', 'up', 0, 'O4GEL112A', '2023-11-27 08:02:12'),
+	(110, 'COMM', 'up', 0, 'O4GEL112A', '2023-11-27 08:26:05'),
+	(111, 'COMM', 'up', 0, 'O4GEL112A', '2023-11-27 08:26:42'),
+	(112, 'COMM', 'up', 0, 'O4GEL112A', '2023-11-27 08:26:54'),
+	(113, 'COMM', 'up', 0, 'O4GEL112A', '2023-11-27 08:26:55'),
+	(114, 'COMM', 'up', 0, 'O4GEL112A', '2023-11-27 08:27:00'),
+	(115, 'COMM', 'up', 0, 'O4GEL112A', '2023-11-27 08:27:14'),
+	(116, 'COMM', 'up', 0, 'O4GEL112A', '2023-11-27 08:27:14'),
+	(117, 'COMM', 'up', 0, 'O4GEL112A', '2023-11-27 08:27:23'),
+	(118, 'NORM', 'up', 0, 'O4GEL112A', '2023-11-27 08:27:29'),
+	(119, 'COMM', 'up', 0, 'O4GEL112A', '2023-11-27 08:31:39'),
+	(120, 'COMM', 'up', 0, 'O4GEL112A', '2023-11-27 08:31:40'),
+	(121, 'COMM', 'up', 0, 'O4GEL112A', '2023-11-27 08:31:50'),
+	(122, 'COMM', 'up', 0, 'O4GEL112A', '2023-11-27 08:31:55'),
+	(123, 'COMM', 'up', 0, 'O4GEL112A', '2023-11-27 08:32:02'),
+	(124, 'NORM', 'up', 0, 'O4GEL112A', '2023-11-27 08:32:09'),
+	(125, 'COMM', 'up', 0, 'O4GEL112A', '2023-11-27 08:34:28'),
+	(126, 'COMM', 'down', 0, 'O4GEL112A', '2023-11-27 08:46:48'),
+	(127, 'COMM', 'down', 0, 'O4GEL112A', '2023-11-27 08:47:04'),
+	(128, 'NORM', 'up', 0, 'O4GEL112A', '2023-11-27 10:47:46'),
+	(129, 'STOP', 'down', 0, 'O4GEL112A', '2023-11-27 10:48:57'),
+	(130, 'STOP', 'up', 0, 'O4GEL112A', '2023-11-27 10:49:41'),
+	(131, 'COMM', 'up', 0, 'O4GEL112A', '2023-11-27 10:49:56'),
+	(132, 'NORM', 'up', 0, 'O41EL221C', '2023-11-27 10:52:26'),
+	(133, 'COMM', 'up', 0, 'O41EL221C', '2023-11-27 10:52:36'),
+	(134, 'COMM', 'up', 0, 'O41EL221C', '2023-11-27 10:52:47'),
+	(135, 'COMM', 'up', 0, 'O41EL221C', '2023-11-27 10:53:02'),
+	(136, 'NORM', 'down', 0, 'O41EL221C', '2023-11-27 10:54:42'),
+	(137, 'COMM', 'down', 0, 'O41EL221C', '2023-11-27 10:54:56'),
+	(138, 'STOP', 'down', 1, 'O41EL221C', '2023-11-27 10:56:27'),
+	(139, 'NORM', 'down', 0, 'O41EL221C', '2023-11-27 10:59:00'),
+	(140, 'COMM', 'down', 0, 'O41EL221C', '2023-11-27 10:59:11'),
+	(141, 'STOP', 'down', 1, 'O41EL221C', '2023-11-27 11:00:50'),
+	(142, 'COMM', 'down', 0, 'O41EL221C', '2023-11-27 11:00:09'),
+	(143, 'COMM', 'down', 0, 'O41EL221C', '2023-11-27 11:01:05');
 
 -- Dumping structure for table demo_project.history
 CREATE TABLE IF NOT EXISTS `history` (
@@ -143,16 +200,20 @@ CREATE TABLE IF NOT EXISTS `history` (
   KEY `FK_history_building_2` (`number`),
   CONSTRAINT `FK_history_building` FOREIGN KEY (`building`) REFERENCES `building` (`building`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `FK_history_building_2` FOREIGN KEY (`number`) REFERENCES `building` (`number`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
--- Dumping data for table demo_project.history: ~6 rows (approximately)
+-- Dumping data for table demo_project.history: ~10 rows (approximately)
 REPLACE INTO `history` (`id`, `date`, `time`, `building`, `group`, `number`, `information`) VALUES
 	(13, '2023-11-23', '17:50:35', 'O1B', 'A', 'EL1,4(A1)', 'Communication by 01BGEL14A'),
 	(14, '2023-11-23', '17:57:37', 'H4', 'A', 'EL1(A1)', 'Communication by H469EL11A'),
 	(15, '2023-11-23', '17:58:03', 'H4', 'A', 'EL1(A2)', 'Communication by H469EL12A'),
 	(16, '2023-11-23', '17:59:30', 'O1B', 'B', 'EL2,1(A3)', 'Communication by O1BMEL21B'),
 	(17, '2023-11-23', '18:03:53', 'O3', 'B', 'ES3(A3)', 'Communication by O32ES3B'),
-	(18, '2023-11-24', '15:03:31', 'H3', 'A', 'ES2(A2)', 'Communication by H3GES2A');
+	(18, '2023-11-24', '15:03:31', 'H3', 'A', 'ES2(A2)', 'Communication by H3GES2A'),
+	(19, '2023-11-26', '21:30:06', 'O2', 'A', 'EL1,1(A1)', 'Communication by O2GEL11A'),
+	(20, '2023-11-26', '21:30:58', 'O2', 'A', 'EL1,1(A1)', 'Communication by O2GEL11A'),
+	(21, '2023-11-27', '10:56:27', 'O4', 'C', 'EL2.2-1(A5)', 'Communication by O41EL221C'),
+	(22, '2023-11-27', '10:59:59', 'O4', 'C', 'EL2.2-1(A5)', 'Communication by O41EL221C');
 
 -- Dumping structure for table demo_project.user
 CREATE TABLE IF NOT EXISTS `user` (
@@ -165,15 +226,12 @@ CREATE TABLE IF NOT EXISTS `user` (
   PRIMARY KEY (`username`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
--- Dumping data for table demo_project.user: ~8 rows (approximately)
+-- Dumping data for table demo_project.user: ~5 rows (approximately)
 REPLACE INTO `user` (`username`, `password`, `role`, `token`, `iat`, `exp`) VALUES
 	('admin1@gmail.com', 'test1234', 'admin', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluMUBnbWFpbC5jb20iLCJpYXQiOjE3MDA4MjU2NjAsImV4cCI6MTcwMDgyOTI2MH0.LRAswhkGZXaJx6UtXJZ_fI8D8FT-WTZF3wrMDFzHi7g', '2023-11-24 18:34:20', '2023-11-24 19:34:20'),
-	('hotel3@gmail.com', 'htof2468', 'hotel_3', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhvdGVsM0BnbWFpbC5jb20iLCJpYXQiOjE3MDA4MjU4NjUsImV4cCI6MTcwMDgyOTQ2NX0.mI3p9qs8jvIvBhiCscn_Y90KwDiz4EsIT_FyG7qrO9Y', '2023-11-24 18:37:45', '2023-11-24 19:37:45'),
-	('hotel4@gmail.com', 'htof1357', 'hotel_4', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhvdGVsNEBnbWFpbC5jb20iLCJpYXQiOjE3MDA4MjU3MDksImV4cCI6MTcwMDgyOTMwOX0.ED3vGYjc5ono-nPG-2Xe-_AxrqI8AA8hXtRYvERWmL4', '2023-11-24 18:35:09', '2023-11-24 19:35:09'),
-	('office1b@hotmail.com', 'of1b', 'office_1b', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im9mZmljZTFiQGhvdG1haWwuY29tIiwiaWF0IjoxNzAwODI2MTg5LCJleHAiOjE3MDA4Mjk3ODl9.L8B9JFcbHZd5yaTTJq1TPqHhspN7F2aFxMDHE1yUoBE', '2023-11-24 18:43:09', '2023-11-24 19:43:09'),
-	('office2@hotmail.com', 'of2', 'office_2', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im9mZmljZTJAaG90bWFpbC5jb20iLCJpYXQiOjE3MDA4MjU3NzIsImV4cCI6MTcwMDgyOTM3Mn0.f-CoEJfJVkblUk01snIfAudtOkbetQTr72kJuT1gWt8', '2023-11-24 18:36:12', '2023-11-24 19:36:12'),
-	('office3@hotmail.com', 'of3', 'office_3', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im9mZmljZTNAaG90bWFpbC5jb20iLCJpYXQiOjE3MDA4MjU3OTYsImV4cCI6MTcwMDgyOTM5Nn0.uFl8drJaG6izWHPv7RHReA7OvFh5ifMsB98fpx3Yz88', '2023-11-24 18:36:36', '2023-11-24 19:36:36'),
-	('office4@hotmail.com', 'of4', 'office_4', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im9mZmljZTRAaG90bWFpbC5jb20iLCJpYXQiOjE3MDA4MjU4MjQsImV4cCI6MTcwMDgyOTQyNH0.W_IZGlCDMianetjJXtWyOqfrwdUlwVAj3hnrj4TCVa8', '2023-11-24 18:37:04', '2023-11-24 19:37:04'),
+	('hotel3@gmail.com', 'htof2468', 'hotel_3', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhvdGVsM0BnbWFpbC5jb20iLCJpYXQiOjE3MDA5ODE3NTQsImV4cCI6MTcwMDk4NTM1NH0.sL0JIl9eCq1kbozi3BKdXAG_nLHA9ekTKYvngfwgGnw', '2023-11-26 13:55:54', '2023-11-26 14:55:54'),
+	('hotel4@gmail.com', 'htof1357', 'hotel_4', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhvdGVsNEBnbWFpbC5jb20iLCJpYXQiOjE3MDA5ODE3MTcsImV4cCI6MTcwMDk4NTMxN30._q5NC7JE-0-qjd86P2kyuDwHT1HdTR0c5PjHQItEulg', '2023-11-26 13:55:17', '2023-11-26 14:55:17'),
+	('office5678@hotmail.com', 'of1b234', 'office', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im9mZmljZTU2NzhAaG90bWFpbC5jb20iLCJpYXQiOjE3MDEwMDk0ODEsImV4cCI6MTcwMTAxMzA4MX0.6PUxZMMuxuQWf8UZgg4TNm5QRKhSgQK9zDbdrgKmm9A', '2023-11-26 21:38:01', '2023-11-26 22:38:01'),
 	('test123@gmail.com', 'zaza5555', 'admin', '', NULL, NULL);
 
 /*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;

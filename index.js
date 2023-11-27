@@ -21,90 +21,32 @@ const db = mysql.createConnection({
 
 app.post('/gethistory', (req, res) =>{
     const userrole = req.body.userrole;
-    if(userrole === "hotel_3"){
-        db.query(`SELECT * FROM history WHERE building = 'H3' `, (err, result) => {
-            if(err){
-                console.log(err);
-                res.status(500).json({ message: "Cann't connect history table" });
-            }
-            else{
-                // console.log("Get result success!");
-                res.status(200).json({ result });
-            }
-        });
+    let condition;
+
+    switch (userrole) {
+        case "office":
+            condition = "building IN ('O1B', 'O2', 'O3', 'O4')";
+            break;
+        case "hotel_3":
+            condition = "building = 'H3'";
+            break;
+        case "hotel_4":
+            condition = "building = 'H4'";
+            break;
+        default:
+            condition = "1"; // True condition to get all buildings
+            break;
     }
-    else if(userrole === "hotel_4"){
-        db.query(`SELECT * FROM history WHERE building = 'H4' `, (err, result) => {
-            if(err){
-                console.log(err);
-                res.status(500).json({ message: "Cann't connect history table" });
-            }
-            else{
-                // console.log("Get result success!");
-                res.status(200).json({ result });
-            }
-        });
-    }
-    else if(userrole === "office_1b"){
-        db.query(`SELECT * FROM history WHERE building = 'O1B' `, (err, result) => {
-            if(err){
-                console.log(err);
-                res.status(500).json({ message: "Cann't connect history table" });
-            }
-            else{
-                // console.log("Get result success!");
-                res.status(200).json({ result });
-            }
-        });
-    }
-    else if(userrole === "office_2"){
-        db.query(`SELECT * FROM history WHERE building = 'O2' `, (err, result) => {
-            if(err){
-                console.log(err);
-                res.status(500).json({ message: "Cann't connect history table" });
-            }
-            else{
-                // console.log("Get result success!");
-                res.status(200).json({ result });
-            }
-        });
-    }
-    else if(userrole === "office_3"){
-        db.query(`SELECT * FROM history WHERE building = 'O3' `, (err, result) => {
-            if(err){
-                console.log(err);
-                res.status(500).json({ message: "Cann't connect history table" });
-            }
-            else{
-                // console.log("Get result success!");
-                res.status(200).json({ result });
-            }
-        });
-    }
-    else if(userrole === "office_4"){
-        db.query(`SELECT * FROM history WHERE building = 'O4' `, (err, result) => {
-            if(err){
-                console.log(err);
-                res.status(500).json({ message: "Cann't connect history table" });
-            }
-            else{
-                // console.log("Get result success!");
-                res.status(200).json({ result });
-            }
-        });
-    }
-    else{
-        db.query("SELECT * FROM history", (err, result) =>{
-            if(err){
-                console.log(err);
-                res.status(500).json({ message: "Cann't connect history table" });
-            }
-            else{
-                // console.log("Get result success!");
-                res.status(200).json({ result });
-            }
-        });
-    }
+    db.query(`SELECT * FROM history WHERE ${condition}`, (err, result) =>{
+        if(err){
+            console.log(err);
+            res.status(500).json({ message: "Cann't connect history table" });
+        }
+        else{
+            // console.log("Get result success!");
+            res.status(200).json({ result });
+        }
+    });
 });
 
 app.post('/posthistory', (req, res) => {
@@ -130,6 +72,9 @@ app.post('/posthistory', (req, res) => {
 
 //test encoder_input post
 
+var senddata = {id:{},office:{},hotel3:{},hotel4:{}};
+var postdata;
+
 app.post('/inputdetected', (req, res) => {
     const status = req.body.status;
     const dir = req.body.dir;
@@ -138,7 +83,7 @@ app.post('/inputdetected', (req, res) => {
 
     if (!status || !dir || !event || !ip) {
         // return res.status(400).json({ message: "Missing required parameters in the request body" });
-        const userdata = {admin:0, office1b:0, office2:0, office3:0, office4:0 , hotel3:0, hotel4:0};
+        const userdata = {admin:0, office:0, hotel3:0, hotel4:0};
         const h3data = [];
         const h4data = [];
         const o1bdata = [];
@@ -163,17 +108,8 @@ app.post('/inputdetected', (req, res) => {
                     else if(result[i].role === 'hotel_4'){
                         userdata.hotel4 += 1;
                     }
-                    else if(result[i].role === 'office_1b'){
-                        userdata.office1b += 1;
-                    }
-                    else if(result[i].role === 'office_2'){
-                        userdata.office2 += 1;
-                    }
-                    else if(result[i].role === 'office_3'){
-                        userdata.office3 += 1;
-                    }
-                    else if(result[i].role === 'office_4'){
-                        userdata.office4 += 1;
+                    else if(result[i].role === 'office'){
+                        userdata.office += 1;
                     }
                 }
 
@@ -219,7 +155,7 @@ app.post('/inputdetected', (req, res) => {
                             const groupedData = data.reduce((acc, current) => {
                                 const { ip, no , number , dir , status } = current;
                                 if (!acc[ip] || acc[ip].no < no) {
-                                    acc[ip] = { number, dir, status };
+                                    acc[ip] = { no, number, dir, status };
                                 }
                                 return acc;
                             }, {});
@@ -234,7 +170,7 @@ app.post('/inputdetected', (req, res) => {
                         const filteredO3Data = combineAndFilterData(o3data);
                         const filteredO4Data = combineAndFilterData(o4data);
                         
-                        return res.status(200).json({ id: userdata , 
+                        senddata = { id: userdata , 
                             office:
                             { o1b: filteredO1bData,
                             o2: filteredO2Data,
@@ -242,11 +178,15 @@ app.post('/inputdetected', (req, res) => {
                             o4: filteredO4Data },
                             hotel3: { h3:filteredH3Data },
                             hotel4: { h4:filteredH4Data } 
-                        });
+                        }
+                        // console.log(senddata);
+                        return res.status(200).json(senddata);
                     }
                 });
             }
         });
+        console.log(senddata);
+        console.log(JSON.stringify(senddata, null, 4));
     }
 
     else{
@@ -289,99 +229,45 @@ app.post('/inputdetected', (req, res) => {
                 return res.status(500).json({message: "Encoder_input post in databased failed!"});
             }
             else{
+                postdata = { 
+                    no:result.insertId, status:status, dir:dir, 
+                    event:event, ip:ip, date:currentdate ,time: currenttime};
+                console.log(postdata);
                 return res.status(200).json({message: "Encoder_input post Success!"});
             }
         });
     }
-
 });
 
 app.post('/getbuilding', (req, res) =>{
     const userrole = req.body.userrole;
-    if( userrole === "office_1b" ){
-        db.query(`SELECT * FROM building WHERE building = 'O1B' ORDER BY building`, (err, result) =>{
-            if(err){
-                console.log(err);
-                res.status(500).json({ message: "Cann't connect building table" });
-            }
-            else{
-                // console.log("Get result success!");
-                res.status(200).json({ result });
-            }
-        });
+    let condition;
+
+    switch (userrole) {
+        case "office":
+            condition = "building IN ('O1B', 'O2', 'O3', 'O4')";
+            break;
+        case "hotel_3":
+            condition = "building = 'H3'";
+            break;
+        case "hotel_4":
+            condition = "building = 'H4'";
+            break;
+        default:
+            condition = "1"; // True condition to get all buildings
+            break;
     }
-    else if( userrole === "office_2" ){
-        db.query(`SELECT * FROM building WHERE building = 'O2' ORDER BY building`, (err, result) =>{
-            if(err){
-                console.log(err);
-                res.status(500).json({ message: "Cann't connect building table" });
-            }
-            else{
-                // console.log("Get result success!");
-                res.status(200).json({ result });
-            }
-        });
-    }
-    else if( userrole === "office_3" ){
-        db.query(`SELECT * FROM building WHERE building = 'O3' ORDER BY building`, (err, result) =>{
-            if(err){
-                console.log(err);
-                res.status(500).json({ message: "Cann't connect building table" });
-            }
-            else{
-                // console.log("Get result success!");
-                res.status(200).json({ result });
-            }
-        });
-    }
-    else if( userrole === "office_4" ){
-        db.query(`SELECT * FROM building WHERE building = 'O4' ORDER BY building`, (err, result) =>{
-            if(err){
-                console.log(err);
-                res.status(500).json({ message: "Cann't connect building table" });
-            }
-            else{
-                // console.log("Get result success!");
-                res.status(200).json({ result });
-            }
-        });
-    }
-    else if( userrole === "hotel_3" ){
-        db.query(`SELECT * FROM building WHERE building = 'H3' ORDER BY building`, (err, result) =>{
-            if(err){
-                console.log(err);
-                res.status(500).json({ message: "Cann't connect building table" });
-            }
-            else{
-                // console.log("Get result success!");
-                res.status(200).json({ result });
-            }
-        });
-    }
-    else if( userrole === "hotel_4" ){
-        db.query(`SELECT * FROM building WHERE building = 'H4' ORDER BY building`, (err, result) =>{
-            if(err){
-                console.log(err);
-                res.status(500).json({ message: "Cann't connect building table" });
-            }
-            else{
-                // console.log("Get result success!");
-                res.status(200).json({ result });
-            }
-        });
-    }
-    else{
-        db.query("SELECT * FROM building ORDER BY building", (err, result) =>{
-            if(err){
-                console.log(err);
-                res.status(500).json({ message: "Cann't connect building table" });
-            }
-            else{
-                // console.log("Get result success!");
-                res.status(200).json({ result });
-            }
-        });
-    }
+
+    const query = `SELECT * FROM building WHERE ${condition} ORDER BY building`;
+
+    db.query(query, (err, result) => {
+        if (err) {
+            console.log(err);
+            res.status(500).json({ message: "Can't connect building table" });
+        } else {
+            res.status(200).json({ result });
+        }
+    });
 });
 
 app.get('/getencoderInput', (req, res) => {
@@ -467,19 +353,23 @@ app.post('/getuserdata', (req, res) => {
 });
 
 app.post('/check8secnoupdate', (req, res) => {
+    const currentdate = moment().tz('Your-Timezone').format('YYYY-MM-DD');
+    const currenttime = new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' }); 
+    // console.log(currentdate+' '+currenttime);
     const no = req.body.no;
-    db.query('SELECT status,ip FROM encoder_input WHERE no = ?', 
-    [no], (err, result) => {
+    db.query('SELECT status,dir,ip,datetime FROM encoder_input WHERE no = ?', [no], (err, result) => {
         if(err){
             console.log(err);
             res.status(500).json({ message: "Cann't encoder_input user table" });
         }
         else{
-            // console.log(result[0].status);
+            const dbDate = moment(result[0].datetime).format('YYYY-MM-DD');
+            const dbTime = moment(result[0].datetime).format('HH:mm:ss');
             const ip = result[0].ip;
-            if(result[0].status !== "COMM"){
+            const dir = result[0].dir;
+            if(currentdate!==dbDate){
                 db.query(`INSERT INTO encoder_input (status, dir, event, ip, datetime) 
-                VALUE (?, ?, ?, ?, NOW())`,["COMM", "err", 0, ip], (err,result) => {
+                VALUE (?, ?, ?, ?, NOW())`,["COMM", dir, 0, ip], (err,result) => {
                     if(err){
                         console.log(err);
                         return res.status(500).json({message: "Encoder_input post in databased failed!"});
@@ -490,8 +380,33 @@ app.post('/check8secnoupdate', (req, res) => {
                 });
             }
             else{
-                // console.log("Communication Fail!");
-                res.status(500).json({message: "Communication Fail!"});
+                const currentTimeMoment = moment(currenttime, 'HH:mm:ss');
+                const dbTimeMoment = moment(dbTime, 'HH:mm:ss');
+                const timeDifference = currentTimeMoment.diff(dbTimeMoment, 'seconds');
+
+                if (timeDifference >= 8) {
+                    if(result[0].status !== "COMM"){
+                        db.query(`INSERT INTO encoder_input (status, dir, event, ip, datetime) 
+                        VALUE (?, ?, ?, ?, NOW())`,["COMM", dir, 0, ip], (err,result) => {
+                            if(err){
+                                console.log(err);
+                                return res.status(500).json({message: "Encoder_input post in databased failed!"});
+                            }
+                            else{
+                                return res.status(200).json({message: "Encoder_input post Success!"});
+                            }
+                        });
+                    }
+                    else{
+                        console.log("Communication Fail!");
+                        return res.status(500).json({message: "Communication Fail!"});
+                    }
+                } 
+                else {
+                    console.log("Database date/time diffrence date/time < 8 second");
+                    return res.status(500).json({message: "Database date/time diffrence date/time < 8 second"});
+                }
+                console.log(timeDifference+' second');
             }
         }
     });
