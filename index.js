@@ -19,25 +19,8 @@ const db = mysql.createConnection({
     database: "demo_project"
 })
 
-app.post('/gethistory', (req, res) =>{
-    const userrole = req.body.userrole;
-    let condition;
-
-    switch (userrole) {
-        case "office":
-            condition = "building IN ('O1B', 'O2', 'O3', 'O4')";
-            break;
-        case "hotel_3":
-            condition = "building = 'H3'";
-            break;
-        case "hotel_4":
-            condition = "building = 'H4'";
-            break;
-        default:
-            condition = "1"; // True condition to get all buildings
-            break;
-    }
-    db.query(`SELECT * FROM history WHERE ${condition}`, (err, result) =>{
+app.get('/gethistory', (req, res) =>{
+    db.query(`SELECT * FROM history`, (err, result) =>{
         if(err){
             console.log(err);
             res.status(500).json({ message: "Cann't connect history table" });
@@ -410,6 +393,96 @@ app.post('/check8secnoupdate', (req, res) => {
             }
         }
     });
+});
+
+var filterdata;
+app.post('/filter', (req, res) => {
+    const period = req.body.period;
+    const infor = req.body.infor;
+    const building = req.body.building;
+    const group = req.body.group;
+    const number = req.body.number;
+    const userrole = req.body.userrole;
+    if( period === ' ' && infor === 'All' && building === 'All' && group === 'All' && number === 'All' ){
+        let condition;
+
+        switch (userrole) {
+            case "office":
+                condition = "building IN ('O1B', 'O2', 'O3', 'O4')";
+                break;
+            case "hotel_3":
+                condition = "building = 'H3'";
+                break;
+            case "hotel_4":
+                condition = "building = 'H4'";
+                break;
+            default:
+                condition = "1"; // True condition to get all buildings
+                break;
+        }
+
+        const query = `SELECT * FROM history WHERE ${condition}`;
+
+        db.query(query, (err, result) => {
+            if (err) {
+                console.log(err);
+                res.status(500).json({ message: "Can't connect history table" });
+            } else {
+                res.status(200).json({ result });
+            }
+        });
+    }
+    else{
+        let conditions = [];
+
+        if (period !== ' ') {
+            const [startDate, endDate] = period.split(' '); // Assuming period format is 'startdate enddate'
+            conditions.push(`date BETWEEN '${startDate}' AND '${endDate}'`);
+        }
+        if (infor !== 'All') {
+            conditions.push(`information = '${infor}'`);
+        }
+        if (building !== 'All') {
+            conditions.push(`building = '${building}'`);
+        }
+        if (group !== 'All') {
+            conditions.push(`\`group\` = '${group}'`);
+        }
+        if (number !== 'All') {
+            conditions.push(`number = '${number}'`);
+        }
+        if (userrole === 'office') {
+            conditions.push("building IN ('O1B', 'O2', 'O3', 'O4')");
+        } else if (userrole === 'hotel_3') {
+            conditions.push("building = 'H3'");
+        } else if (userrole === 'hotel_4') {
+            conditions.push("building = 'H4'");
+        }
+
+        const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
+
+        const query = `SELECT * FROM history ${whereClause}`;
+        db.query(query, (err, result) => {
+            if (err) {
+                console.log(err);
+                res.status(500).json({ message: "Can't connect history table" });
+            } else {
+                res.status(200).json({ result });
+            }
+        });
+    }
+    // db.query('', (err, result) => {
+    //     if(err){
+    //         console.log(err);
+    //         return res.status(500).json({ message: "Cann't connect history table" });  
+    //     }
+    //     else{
+
+    //     }
+    // });
+    filterdata = { period:period, infor:infor, building:building,
+        group:group, number:number }
+    console.log(filterdata)
 });
 
 app.listen('3001', () =>{
