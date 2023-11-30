@@ -3,6 +3,7 @@ const mysql = require('mysql');
 const cors = require('cors');
 const moment = require('moment-timezone');
 const jwt = require('jsonwebtoken');
+const functions = require('./functions');
 const app = express();
 
 app.use(cors({
@@ -48,7 +49,6 @@ app.post('/posthistory', (req, res) => {
         }
         else{
             return res.status(200).json({message: "History post Success!"});
-            //console.log(res)
         }
     });
 });
@@ -183,27 +183,75 @@ app.post('/inputdetected', (req, res) => {
             group: lastChar
         }
         if(event==='1'){
-            db.query(`SELECT * FROM building WHERE ip=? `, [ip], (err, result) =>{
-                if(err){
-                    console.log(err);
-                    res.status(500).json({ message: "Cann't connect building table" });
-                }
-                else{
-                    getbuildingvalue.building = result[0].building;
-                    getbuildingvalue.number = result[0].number;
-                    db.query(`INSERT INTO history (date, time, building, \`group\`, number, information) VALUE (?, ?, ?, ?, ?, ?)`, 
-                        [currentdate, currenttime, getbuildingvalue.building, getbuildingvalue.group, getbuildingvalue.number, 'Communication by '+ip], 
-                        (err,result) => {
-                            if(err){
-                                console.log(err);
-                                return res.status(500).json({message: "History post in databased failed!"});
-                            }
-                            else{
-                                console.log( "History post Success!" );
-                            }
-                    });
-                }
-            });
+            if( status === 'COMM' ){
+                db.query(`SELECT * FROM building WHERE ip=? `, [ip], (err, result) =>{
+                    if(err){
+                        console.log(err);
+                        res.status(500).json({ message: "Cann't connect building table" });
+                    }
+                    else{
+                        getbuildingvalue.building = result[0].building;
+                        getbuildingvalue.number = result[0].number;
+                        db.query(`INSERT INTO history (date, time, building, \`group\`, number, information) VALUE (?, ?, ?, ?, ?, ?)`, 
+                            [currentdate, currenttime, getbuildingvalue.building, getbuildingvalue.group, getbuildingvalue.number, 'COMM'], 
+                            (err,result) => {
+                                if(err){
+                                    console.log(err);
+                                    return res.status(500).json({message: "History post in databased failed!"});
+                                }
+                                else{
+                                    console.log( "History post Success!" );
+                                }
+                        });
+                    }
+                });
+            }
+            else if( status === 'ERR' ){
+                db.query(`SELECT * FROM building WHERE ip=? `, [ip], (err, result) =>{
+                    if(err){
+                        console.log(err);
+                        res.status(500).json({ message: "Cann't connect building table" });
+                    }
+                    else{
+                        getbuildingvalue.building = result[0].building;
+                        getbuildingvalue.number = result[0].number;
+                        db.query(`INSERT INTO history (date, time, building, \`group\`, number, information) VALUE (?, ?, ?, ?, ?, ?)`, 
+                            [currentdate, currenttime, getbuildingvalue.building, getbuildingvalue.group, getbuildingvalue.number, 'ERR'], 
+                            (err,result) => {
+                                if(err){
+                                    console.log(err);
+                                    return res.status(500).json({message: "History post in databased failed!"});
+                                }
+                                else{
+                                    console.log( "History post Success!" );
+                                }
+                        });
+                    }
+                });
+            }
+            else{
+                db.query(`SELECT * FROM building WHERE ip=? `, [ip], (err, result) =>{
+                    if(err){
+                        console.log(err);
+                        res.status(500).json({ message: "Cann't connect building table" });
+                    }
+                    else{
+                        getbuildingvalue.building = result[0].building;
+                        getbuildingvalue.number = result[0].number;
+                        db.query(`INSERT INTO history (date, time, building, \`group\`, number, information) VALUE (?, ?, ?, ?, ?, ?)`, 
+                            [currentdate, currenttime, getbuildingvalue.building, getbuildingvalue.group, getbuildingvalue.number, 'Communication by '+ip], 
+                            (err,result) => {
+                                if(err){
+                                    console.log(err);
+                                    return res.status(500).json({message: "History post in databased failed!"});
+                                }
+                                else{
+                                    console.log( "History post Success!" );
+                                }
+                        });
+                    }
+                });
+            }
         }
         db.query(`INSERT INTO encoder_input (status, dir, event, ip, datetime) 
         VALUE (?, ?, ?, ?, NOW())`,[status, dir, event, ip], (err,result) => {
@@ -237,7 +285,7 @@ app.post('/getbuilding', (req, res) =>{
             condition = "building = 'H4'";
             break;
         default:
-            condition = "1"; // True condition to get all buildings
+            condition = "1";
             break;
     }
 
@@ -403,86 +451,46 @@ app.post('/filter', (req, res) => {
     const group = req.body.group;
     const number = req.body.number;
     const userrole = req.body.userrole;
-    if( period === ' ' && infor === 'All' && building === 'All' && group === 'All' && number === 'All' ){
-        let condition;
+    const passvalue = { period:period, infor:infor, building:building,
+                        group:group, number:number }
 
-        switch (userrole) {
-            case "office":
-                condition = "building IN ('O1B', 'O2', 'O3', 'O4')";
-                break;
-            case "hotel_3":
-                condition = "building = 'H3'";
-                break;
-            case "hotel_4":
-                condition = "building = 'H4'";
-                break;
-            default:
-                condition = "1"; // True condition to get all buildings
-                break;
+    functions.filter(passvalue, userrole, (err, result) => {
+        if (err) {
+            return res.status(err.status).json({ message: err.message });
+        } 
+        else {
+            return res.status(result.status).json({ result: result.result });
         }
-
-        const query = `SELECT * FROM history WHERE ${condition}`;
-
-        db.query(query, (err, result) => {
-            if (err) {
-                console.log(err);
-                res.status(500).json({ message: "Can't connect history table" });
-            } else {
-                res.status(200).json({ result });
-            }
-        });
-    }
-    else{
-        let conditions = [];
-
-        if (period !== ' ') {
-            const [startDate, endDate] = period.split(' '); // Assuming period format is 'startdate enddate'
-            conditions.push(`date BETWEEN '${startDate}' AND '${endDate}'`);
-        }
-        if (infor !== 'All') {
-            conditions.push(`information = '${infor}'`);
-        }
-        if (building !== 'All') {
-            conditions.push(`building = '${building}'`);
-        }
-        if (group !== 'All') {
-            conditions.push(`\`group\` = '${group}'`);
-        }
-        if (number !== 'All') {
-            conditions.push(`number = '${number}'`);
-        }
-        if (userrole === 'office') {
-            conditions.push("building IN ('O1B', 'O2', 'O3', 'O4')");
-        } else if (userrole === 'hotel_3') {
-            conditions.push("building = 'H3'");
-        } else if (userrole === 'hotel_4') {
-            conditions.push("building = 'H4'");
-        }
-
-        const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
-
-        const query = `SELECT * FROM history ${whereClause}`;
-        db.query(query, (err, result) => {
-            if (err) {
-                console.log(err);
-                res.status(500).json({ message: "Can't connect history table" });
-            } else {
-                res.status(200).json({ result });
-            }
-        });
-    }
-    // db.query('', (err, result) => {
-    //     if(err){
-    //         console.log(err);
-    //         return res.status(500).json({ message: "Cann't connect history table" });  
-    //     }
-    //     else{
-
-    //     }
-    // });
+    });
     filterdata = { period:period, infor:infor, building:building,
         group:group, number:number }
-    console.log(filterdata)
+    // console.log(filterdata);
+});
+
+app.get('/alarm', (req, res) => {
+    const token = req.headers.authorization && req.headers.authorization.split(' ')[1];
+    
+    if (!token) {
+        return res.status(401).json({ message: 'Unauthorized: Missing token' });
+    }
+    else{
+        jwt.verify(token, 'accessToken', (err, decoded) => {
+            if (err) {
+                console.log(err);
+                return res.status(401).json({ message: 'Unauthorized: Invalid token' });
+            }
+    
+            const username = decoded.username;
+            // console.log(username);
+            functions.getHistory_timeconfirm(username, (err, result) => {
+                if (err) {
+                    return res.status(err.status).json({ message: err.message });
+                } else {
+                    return res.status(result.status).json({ result: result.result });
+                }
+            });
+        });
+    }
 });
 
 app.listen('3001', () =>{
